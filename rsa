@@ -1,53 +1,135 @@
-#!/usr/bin/python3
-"""
-Factorize as many numbers as possible into a product of two smaller numbers.
-    Usage: factors <file>
-        where <file> is a file containing natural numbers to factor.
-        One number per line
-        You can assume that all lines will be valid natural numbers\
-                greater than 1
-        You can assume that there will be no empy line, and no space\
-                before and after the valid number
-        The file will always end with a new line
-    Output format: n=p*q
-        one factorization per line
-        p and q don’t have to be prime numbers
-        See example
-    You can work on the numbers of the file in the order of your choice
-    Your program should run without any dependency: You will not be ablei\
-            to install anything on the machine we will run your program on
-    Time limit: Your program will be killed after 5 seconds\
-            if it hasn’t finish
-    Push all your scripts, source code, etc… to your repository
-"""
-# library to get arguments
-import sys
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "main.h"
+#include <limits.h>
+#include <math.h>
 
+/**
+ * main - fonction give pq of n
+ * @file: file with n numbers
+ * Return: 0 if succed or 1 if fail.
+ */
 
-# fn unpack number factorial
-def fc():
-    """
-    function fc to search file to convert number and format n=p*q
-    """
-    try:
-        revfile = sys.argv[1]
-        with open(revfile) as f:
-            for revnumber in f:
-                revnumber = int(revnumber)
-                if revnumber % 2 == 0:
-                        print("{}={}*{}".format(revnumber, revnumber // 2, 2))
-                        continue
-                i = 3
-                while i < revnumber // 2:
-                    if revnumber % i == 0:
-                        print("{}={}*{}".format(revnumber, revnumber // i, i))
-                        break
-                    i = i + 2
-                if i == (revnumber // 2) + 1:
-                    print("{}={}*{}".format(revnumber, revnumber, 1))
-    except (IndexError):
-        pass
+int main(int argc, char *argv[])
+{
+	FILE* fichier = NULL;
+	unsigned long long int ktab[45], tab[45], tab2[45];
+	unsigned long long int i = 0, n = 2, j = 0, p, t = 0, a;
+	int chiffre_actuel = 0;
 
+	(void)argc;
 
-# autostart
-fc()
+	fichier = fopen(argv[1], "r");
+	if (fichier != NULL)
+	{
+		do
+		{
+			chiffre_actuel = fgetc(fichier);
+			if (chiffre_actuel == '\n'|| chiffre_actuel == EOF)
+			{
+				printtab(tab, i);
+				n = 2, t = 0, j = 0, p = 0, a = 1;
+				while (p < 44)
+				{
+					tab2[p] = tab[p];
+					p++;
+				}
+				for (int m = 0; m < 44; m++)
+					ktab[m] = 0;
+				while ((tab2[i-1] != 0 || j != i-1) || a == 1)
+				{
+					a = 0;
+					if (tab2[j] >= n)
+					{
+					        tab2[j] -=n;
+						ktab[j] += 1;
+						continue;
+					}
+					else if (tab2[j] == 0)
+					{
+						j++;
+						continue;
+					}
+					else if (tab2[j] < n && j < i-1)
+					{
+						tab2[j+1] = tab2[j]*10 + tab2[j+1], tab2[j] = 0;
+						t++;
+						j++;
+						continue;
+					}
+					p = 0;
+					while (p < 44)
+					{
+						tab2[p] = tab[p];
+						p++;
+					}
+					n++, j = 0;
+					for (int m = 0; m < 44; m++)
+						ktab[m] = 0;
+					}
+				printf("=");
+				printtab(ktab, i);
+				printf("*%lld\n", n);
+				i = 0;
+				for (int m = 0; m < 44; m++)
+					tab[m] = 0;
+				for (int m = 0; m < 44; m++)
+					tab2[m] = 0;
+			}
+			else
+			{
+				tab[i] = chiffre_actuel - 48;
+				i++;
+			}
+		}while (chiffre_actuel != EOF);
+		fclose(fichier);
+	}
+	return (0);
+}
+void printtab(unsigned long long int tab[],unsigned long long int t)
+{
+	int i = 0, a = 0;
+
+	while (t > 0)
+	{
+		if (a == 1)
+		{
+		        printf("%lld", tab[i]);
+		}
+		else if (tab[i] != 0 || a == 1)
+		{
+			a = 1;
+			printf("%lld", tab[i]);
+		}
+		t--;
+		i++;
+	}
+}
+/*void divnumber(int tab[], unsigned long long int n)
+{
+	int j = 0, r = 0, tab2[40];
+	tab2 = copytab(tab);
+	while (tab2[j])
+	{
+		if (tab2[j] > n)
+		{
+			r = tab2[j] % n;
+			tab2[j] /= n;
+			tab2[j+1] = r*10 + tab2[j+1];
+		}
+		else
+			tab2[j+1] = tab2[j]*10 + tab2[j+1];
+		j++;
+	}
+}
+int* copytab(int tab[])
+{
+	int tab2[40], i = 0;
+	while (tab[i])
+	{
+		tab2[i] = tab[i];
+	}
+	return (tab2);
+}
+*/
